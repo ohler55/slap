@@ -3,9 +3,10 @@ module github.com/ohler55/slap
 go 1.25
 
 require (
-	github.com/ohler55/slip v1.3.1
-	github.com/ohler55/slip-ggql v1.3.1
-	github.com/ohler55/slip-mongo v1.3.1
+	github.com/ohler55/slip v1.4.0
+	github.com/ohler55/slip-fhir v1.4.0
+	github.com/ohler55/slip-ggql v1.4.0
+	github.com/ohler55/slip-mongo v1.4.0
 	golang.org/x/term v0.39.0
 )
 
@@ -28,7 +29,7 @@ require (
 
 replace github.com/ohler55/slip => ../slip
 
-// replace github.com/ohler55/slip-fhir => ../slip-fhir
+replace github.com/ohler55/slip-fhir => ../slip-fhir
 
 // replace github.com/ohler55/slip-jet => ../slip-jet
 
