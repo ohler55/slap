@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Release tags mostly follow the Slip release tags.
 
+## [1.4.1] - 2026-05-14
+### Changed
+- Updated slip and plugin versions.
+- Added slip-message and slip-jet plugins.
+
 ## [1.4.0] - 2026-04-21
 ### Added
 - Add slip-fhir to the master branch.
