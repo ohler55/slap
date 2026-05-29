@@ -1,10 +1,24 @@
 # SLAP
 
-A stand alone SLIP App.
+A stand alone Slip App.
 
-To build a SLIP app, branch this repo and update the "load.go" file to
-import the packages desired. Add LISP code to the lisp
+To build a Slip app, branch this repo and update the "load.go" file to
+import the packages desired. Add Lisp code to the lisp
 directory. Update the go.mod file with replaces to refer to the repos
 to be included. Finally call make and the app should be ready as
 "slap". Rename to what ever the app should be or update the Makefile
 to write the correct named app directly.
+
+Another standalone application is __slapper__ located in the slapper
+directory. Like __slap__ this app embeds multiple packages but unlike
+__slapp__ it it does not consumer any command line argument and does
+not start a REPL. The __slapper__ app expects one file argument. The
+remaining arguments are ignored. This allows a list file to start with
+a shebang (#!) that specifies __slapper__ as the interpreter to run
+the Lisp code in the return of the file. A trivial example is:
+
+```
+#!/usr/bin/env slapper
+
+(format t "These are the command line arguments: ~A~%" *app-args*)
+```

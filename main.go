@@ -1,4 +1,4 @@
-// Copyright (c) 2022, Peter Ohler, All rights reserved.
+// Copyright (c) 2026, Peter Ohler, All rights reserved.
 
 // Package main is the main package.
 package main

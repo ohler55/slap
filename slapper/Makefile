@@ -7,11 +7,9 @@ LDFLAG = '-s -w \
 all: build
 
 clean:
-	rm -f slap
-	make -C slapper clean
+	rm -f slapper
 
 build:
-	go build -ldflags $(LDFLAG) -a -installsuffix nocgo -o slap *go
-	make -C slapper
+	go build -ldflags $(LDFLAG) -a -installsuffix nocgo -o slapper *go
 
 .PHONY: all clean build
