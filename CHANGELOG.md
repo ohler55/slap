@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Release tags mostly follow the Slip release tags.
 
+## [1.4.2] - 2026-06-04
+### Added
+- Added slapper.
+
 ## [1.4.1] - 2026-05-14
 ### Changed
 - Updated slip and plugin versions.
