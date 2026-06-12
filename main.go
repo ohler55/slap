@@ -196,7 +196,6 @@ func run() {
 				if path[0] != '/' {
 					pathname = filepath.Join(slip.WorkingDir, path)
 				}
-				fmt.Printf("*** path: %q pathname: %q\n", path, pathname)
 				scope.UnsafeLet(slip.Symbol("*load-pathname*"), slip.String(pathname))
 				scope.UnsafeLet(slip.Symbol("*load-truename*"), slip.String(pathname))
 				if w != nil {
