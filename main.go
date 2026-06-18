@@ -23,14 +23,15 @@ import (
 var (
 	version = ""
 
-	showVersion bool
-	cfgDir      string
-	evalCode    string
-	interactive bool
-	trace       bool
-	allAtOnce   bool
-	args        slip.List
-	coverage    string
+	showVersion    bool
+	cfgDir         string
+	evalCode       string
+	interactive    bool
+	interactiveSet bool
+	trace          bool
+	allAtOnce      bool
+	args           slip.List
+	coverage       string
 )
 
 func init() {
@@ -40,7 +41,18 @@ func init() {
 	flag.BoolVar(&repl.DebugEditor, "debug", repl.DebugEditor, "log each keypress to editor.log")
 	flag.StringVar(&evalCode, "e", evalCode, "code to evaluate")
 	flag.StringVar(&cfgDir, "c", cfgDir, "configuration directory (an empty string or - indicates none)")
-	flag.BoolVar(&interactive, "i", interactive, "interactive mode")
+	flag.BoolFunc("i", "interactive mode", func(v string) error {
+		interactiveSet = true
+		switch v {
+		case "true":
+			interactive = true
+		case "false":
+			interactive = false
+		default:
+			return fmt.Errorf("not a valid value for -i")
+		}
+		return nil
+	})
 	flag.BoolVar(&allAtOnce, "a", allAtOnce, "load all files at once instead of one by one")
 	flag.Func("b", "bind the argument $<n> and add to the $@ list",
 		func(s string) error {
@@ -230,6 +242,9 @@ func run() {
 		if !interactive {
 			return
 		}
+	}
+	if !interactive && interactiveSet {
+		return
 	}
 	repl.Run()
 }
