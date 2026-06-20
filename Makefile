@@ -8,10 +8,10 @@ all: build
 
 clean:
 	rm -f slap
-	make -C slapper clean
+	make -C slapr clean
 
 build:
 	go build -ldflags $(LDFLAG) -a -installsuffix nocgo -o slap *go
-	make -C slapper
+	make -C slapr
 
 .PHONY: all clean build
