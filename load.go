@@ -6,6 +6,7 @@ import (
 	"embed"
 	"io"
 	"io/fs"
+	"path/filepath"
 	"strings"
 
 	// Pull in all functions.
@@ -22,7 +23,7 @@ import (
 //go:embed all:lisp
 var lispFS embed.FS
 
-func loadEmbed(scope *slip.Scope) {
+func loadEmbed(scope *slip.Scope) (listProvs slip.ProvSet) {
 	defer func() {
 		scope.Remove(slip.Symbol("*load-pathname*"))
 		scope.Remove(slip.Symbol("*load-truename*"))
@@ -48,11 +49,18 @@ func loadEmbed(scope *slip.Scope) {
 				panic(err)
 			}
 			paths = append(paths, slip.String(path))
-			code = append(code, slip.Read(buf, scope)...)
+			if path[0] != '/' {
+				path = filepath.Join(slip.WorkingDir, path)
+			}
+			var c slip.Code
+			c, listProvs = slip.ReadProv(buf, scope, path, listProvs)
+			code = append(code, c...)
 			return nil
 		})
 	scope.UnsafeLet(slip.Symbol("*load-pathname*"), paths)
 	scope.UnsafeLet(slip.Symbol("*load-truename*"), paths)
-	code.Compile()
+	code.CompileWithProvenance(listProvs)
 	code.Eval(scope, nil)
+
+	return
 }

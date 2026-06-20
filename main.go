@@ -23,13 +23,15 @@ import (
 var (
 	version = ""
 
-	showVersion bool
-	cfgDir      string
-	evalCode    string
-	interactive bool
-	trace       bool
-	allAtOnce   bool
-	args        slip.List
+	showVersion    bool
+	cfgDir         string
+	evalCode       string
+	interactive    bool
+	interactiveSet bool
+	trace          bool
+	allAtOnce      bool
+	args           slip.List
+	coverage       string
 )
 
 func init() {
@@ -39,13 +41,26 @@ func init() {
 	flag.BoolVar(&repl.DebugEditor, "debug", repl.DebugEditor, "log each keypress to editor.log")
 	flag.StringVar(&evalCode, "e", evalCode, "code to evaluate")
 	flag.StringVar(&cfgDir, "c", cfgDir, "configuration directory (an empty string or - indicates none)")
-	flag.BoolVar(&interactive, "i", interactive, "interactive mode")
+	flag.BoolFunc("i", "interactive mode", func(v string) error {
+		interactiveSet = true
+		switch v {
+		case "true":
+			interactive = true
+		case "false":
+			interactive = false
+		default:
+			return fmt.Errorf("not a valid value for -i")
+		}
+		return nil
+	})
 	flag.BoolVar(&allAtOnce, "a", allAtOnce, "load all files at once instead of one by one")
 	flag.Func("b", "bind the argument $<n> and add to the $@ list",
 		func(s string) error {
 			args = append(args, slip.String(s))
 			return nil
 		})
+	flag.BoolVar(&slip.Provenance, "p", false, "turn on provenance tracking")
+	flag.StringVar(&coverage, "cover", "", "save coverage to provided file")
 }
 
 func main() {
@@ -82,7 +97,14 @@ usage: %[2]s [<options>] [<filepath>]...
 	slip.CLPkg.Locked = true
 	slip.CLPkg.Export("*config-directory*")
 
+	if 0 < len(coverage) {
+		slip.StartCoverage()
+	}
 	run()
+	if 0 < len(coverage) {
+		slip.StopCoverage()
+		slip.WriteCoverage(coverage)
+	}
 }
 
 func run() {
@@ -147,16 +169,20 @@ func run() {
 	if interactive || len(evalCode) == 0 {
 		repl.Interactive = true
 	}
-	loadEmbed(scope)
+	listProvs := loadEmbed(scope)
 	if allAtOnce {
 		var paths slip.List
 		for _, path = range flag.Args() {
 			if buf, err := os.ReadFile(path); err == nil {
-				path = filepath.Join(slip.WorkingDir, path)
+				if path[0] != '/' {
+					path = filepath.Join(slip.WorkingDir, path)
+				}
 				if w != nil {
 					_, _ = fmt.Fprintf(w, ";; Loading contents of %s\n", path)
 				}
-				code = append(code, slip.Read(buf, scope)...)
+				var c slip.Code
+				c, listProvs = slip.ReadProv(buf, scope, path, listProvs)
+				code = append(code, c...)
 				paths = append(paths, slip.String(path))
 			} else {
 				panic(err)
@@ -164,7 +190,7 @@ func run() {
 		}
 		scope.UnsafeLet(slip.Symbol("*load-pathname*"), paths)
 		scope.UnsafeLet(slip.Symbol("*load-truename*"), paths)
-		code.Compile()
+		code.CompileWithProvenance(listProvs)
 		if print == nil {
 			code.Eval(scope, nil)
 		} else {
@@ -178,14 +204,17 @@ func run() {
 	} else {
 		for _, path = range flag.Args() {
 			if buf, err := os.ReadFile(path); err == nil {
-				pathname := slip.String(filepath.Join(slip.WorkingDir, path))
-				scope.UnsafeLet(slip.Symbol("*load-pathname*"), pathname)
-				scope.UnsafeLet(slip.Symbol("*load-truename*"), pathname)
+				pathname := path
+				if path[0] != '/' {
+					pathname = filepath.Join(slip.WorkingDir, path)
+				}
+				scope.UnsafeLet(slip.Symbol("*load-pathname*"), slip.String(pathname))
+				scope.UnsafeLet(slip.Symbol("*load-truename*"), slip.String(pathname))
 				if w != nil {
 					_, _ = fmt.Fprintf(w, ";; Loading contents of %s\n", pathname)
 				}
-				code = slip.Read(buf, scope)
-				code.Compile()
+				code, listProvs = slip.ReadProv(buf, scope, string(pathname), listProvs)
+				code.CompileWithProvenance(listProvs)
 				if print == nil {
 					code.Eval(scope, nil)
 				} else {
@@ -213,6 +242,9 @@ func run() {
 		if !interactive {
 			return
 		}
+	}
+	if !interactive && interactiveSet {
+		return
 	}
 	repl.Run()
 }
