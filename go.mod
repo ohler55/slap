@@ -3,12 +3,12 @@ module github.com/ohler55/slap
 go 1.26
 
 require (
-	github.com/ohler55/slip v1.4.1
-	github.com/ohler55/slip-fhir v1.4.1
-	github.com/ohler55/slip-ggql v1.4.1
-	github.com/ohler55/slip-jet v1.4.1
-	github.com/ohler55/slip-message v1.4.1
-	github.com/ohler55/slip-mongo v1.4.1
+	github.com/ohler55/slip v1.5.0
+	github.com/ohler55/slip-fhir v1.5.0
+	github.com/ohler55/slip-ggql v1.5.0
+	github.com/ohler55/slip-jet v1.5.0
+	github.com/ohler55/slip-message v1.5.0
+	github.com/ohler55/slip-mongo v1.5.0
 	golang.org/x/term v0.42.0
 )
 
@@ -16,7 +16,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/klauspost/compress v1.18.5 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
-	github.com/nats-io/nats.go v1.51.0 // indirect
+	github.com/nats-io/nats.go v1.52.0 // indirect
 	github.com/nats-io/nkeys v0.4.15 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/ohler55/ojg v1.28.1 // indirect
