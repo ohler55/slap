@@ -13,6 +13,7 @@ import (
 
 	"github.com/ohler55/slip"
 	"github.com/ohler55/slip/pkg/bag"
+	"github.com/ohler55/slip/pkg/flavors"
 	"github.com/ohler55/slip/pkg/repl"
 	"golang.org/x/term"
 
@@ -230,10 +231,16 @@ func run() {
 				}
 				code, listProvs = slip.ReadProv(buf, scope, string(pathname), listProvs)
 				code.CompileWithProvenance(listProvs)
+				var loaded slip.Object
 				if print == nil {
-					code.Eval(scope, nil)
+					loaded = code.Eval(scope, nil)
 				} else {
-					code.Eval(scope, w)
+					loaded = code.Eval(scope, w)
+				}
+				if sys, ok := loaded.(*flavors.Instance); ok && sys.Class().Name() == "system" {
+					sys.Set(slip.Symbol("pathname"), slip.String(filepath.Dir(path)))
+					_ = sys.Receive(scope, ":fetch", nil, 0)
+					_ = sys.Receive(scope, ":load", nil, 0)
 				}
 				if w != nil {
 					_, _ = fmt.Fprintf(w, ";; Finished loading %s\n", pathname)
