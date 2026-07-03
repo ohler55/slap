@@ -186,6 +186,7 @@ func run() {
 		repl.Interactive = true
 	}
 	listProvs := loadEmbed(scope)
+	slip.CurrentPackage = &slip.UserPkg
 	if allAtOnce {
 		var paths slip.List
 		for _, path = range flag.Args() {
@@ -245,11 +246,13 @@ func run() {
 				if w != nil {
 					_, _ = fmt.Fprintf(w, ";; Finished loading %s\n", pathname)
 				}
+				slip.CurrentPackage = &slip.UserPkg
 			} else {
 				panic(err)
 			}
 		}
 	}
+	slip.CurrentPackage = &slip.UserPkg
 	scope.Remove(slip.Symbol("*load-pathname*"))
 	scope.Remove(slip.Symbol("*load-truename*"))
 	if 0 < len(evalCode) {
