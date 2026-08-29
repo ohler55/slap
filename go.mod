@@ -1,14 +1,14 @@
 module github.com/ohler55/slap
 
-go 1.26
+go 1.27
 
 require (
-	github.com/ohler55/slip v1.5.0
-	github.com/ohler55/slip-fhir v1.5.0
-	github.com/ohler55/slip-ggql v1.5.0
-	github.com/ohler55/slip-jet v1.5.0
-	github.com/ohler55/slip-message v1.5.0
-	github.com/ohler55/slip-mongo v1.5.0
+	github.com/ohler55/slip v1.5.1
+	github.com/ohler55/slip-fhir v1.5.1
+	github.com/ohler55/slip-ggql v1.5.1
+	github.com/ohler55/slip-jet v1.5.1
+	github.com/ohler55/slip-message v1.5.1
+	github.com/ohler55/slip-mongo v1.5.1
 	golang.org/x/term v0.45.0
 )
 
@@ -17,7 +17,7 @@ require (
 	github.com/nats-io/nats.go v1.52.0 // indirect
 	github.com/nats-io/nkeys v0.4.16 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	github.com/ohler55/ojg v1.28.4 // indirect
+	github.com/ohler55/ojg v1.28.5 // indirect
 	github.com/uhn/ggql v1.2.14 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.2.0 // indirect

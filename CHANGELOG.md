@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Release tags mostly follow the Slip release tags.
 
+## [1.5.1] - 2026-08-29
+### Changed
+- Updated Slip version to v1.5.1
+
 ## [1.5.0] - 2026-06-26
 ### Changed
 - Updated Slip version to v1.5.0
