@@ -52,12 +52,15 @@ func main() {
 				buf = append(buf, '\n')
 				fmt.Print(string(buf))
 			}
+			// Exit non-zero so callers can detect the failure.
+			os.Exit(1)
 		default:
 			if 0 < len(path) {
 				fmt.Printf("\n## error: %s in %s\n\n", tr, path)
 			} else {
 				fmt.Printf("\n## error: %s\n\n", tr)
 			}
+			os.Exit(1)
 		}
 	}()
 	scope := slip.NewScope()
