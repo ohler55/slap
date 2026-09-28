@@ -1,0 +1,100 @@
+name: Build and Push slapr
+
+# Builds and pushes on a version tag or a manual run.
+# Pull requests build and run the smoke test without pushing.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - develop
+      - master
+  workflow_dispatch:
+
+# A newer push to the same ref supersedes an in-flight build.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history so `git describe --tags` finds the tags.
+          fetch-depth: 0
+
+      # GHCR needs a lowercase owner.
+      - name: Compute version and registry
+        id: version
+        run: |
+          echo "version=$(git describe --tags --always)" >> "$GITHUB_OUTPUT"
+          echo "registry=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+        with:
+          driver: docker-container
+          use: true
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Tag pushes use the tag (v1.2.3); manual runs use the branch name;
+      # pull requests use pr-<number>. The bake file adds :latest.
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: slapr
+          tags: |
+            type=semver,pattern={{raw}}
+            type=ref,event=branch
+            type=ref,event=pr
+
+      - name: Build Docker image
+        uses: docker/bake-action@d3418bd7d0e9324001bca92fa8ba175ea7e6dc9b # v7.3.0
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          files: |
+            ./docker/docker-bake.hcl
+          targets: default
+          set: |
+            slapr.cache-from=type=gha,scope=slapr
+            slapr.cache-to=type=gha,mode=max,scope=slapr
+          provenance: false
+        env:
+          TAG: ${{ steps.meta.outputs.version }}
+          VERSION: ${{ steps.version.outputs.version }}
+          REGISTRY: ${{ steps.version.outputs.registry }}
+          SOURCE: ${{ github.server_url }}/${{ github.repository }}
+          LOCAL_ONLY: ${{ github.event_name == 'pull_request' }}
+          LOCAL_ARCH: amd64
+
+      # `docker run` uses the image if it is already loaded (pull requests)
+      # and pulls it from the registry otherwise (tag and manual runs).
+      # Checks: version is stamped, a failing script exits non-zero.
+      - name: Smoke test the image
+        env:
+          IMAGE: ${{ steps.version.outputs.registry }}/slapr:${{ steps.meta.outputs.version }}
+        run: |
+          docker run --rm "$IMAGE"
+          docker run --rm "$IMAGE" sh -c 'printf "(print *slapper-version*)" > /tmp/v.lisp && slapr /tmp/v.lisp'
+          docker run --rm "$IMAGE" sh -c 'id && test -s /etc/ssl/certs/ca-certificates.crt'
+          if docker run --rm "$IMAGE" sh -c 'printf "(car 1)" > /tmp/f.lisp && slapr /tmp/f.lisp'; then
+            echo "ERROR: a failing script exited 0"; exit 1
+          fi
+          echo "failing script exits non-zero: OK"

@@ -14,4 +14,7 @@ build:
 	go build -ldflags $(LDFLAG) -a -installsuffix nocgo -o slap *go
 	make -C slapr
 
-.PHONY: all clean build
+docker:
+	make -C docker build
+
+.PHONY: all clean build docker

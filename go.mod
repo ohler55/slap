@@ -29,17 +29,3 @@ require (
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.40.0 // indirect
 )
-
-replace github.com/ohler55/slip => ../slip
-
-replace github.com/ohler55/slip-fhir => ../slip-fhir
-
-replace github.com/ohler55/slip-jet => ../slip-jet
-
-replace github.com/ohler55/slip-mongo => ../slip-mongo
-
-replace github.com/ohler55/slip-ggql => ../slip-ggql
-
-replace github.com/ohler55/slip-message => ../slip-message
-
-// replace github.com/ohler55/slip-parquet => ../slip-parquet

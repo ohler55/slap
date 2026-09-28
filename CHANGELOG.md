@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Release tags mostly follow the Slip release tags.
 
+## [Unreleased]
+### Added
+- Docker image for slapr (`docker/`, alpine based) and a GitHub Actions
+  workflow that builds and pushes it to GHCR.
+### Changed
+- slapr exits with status 1 when the script fails or cannot be read.
+- Removed the `replace` directives from go.mod; the slip modules are public.
+
 ## [1.5.1] - 2026-08-29
 ### Changed
 - Updated Slip version to v1.5.1
