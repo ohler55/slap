@@ -1,0 +1,6 @@
+# Build context for the slapr image: only what docker/Dockerfile copies.
+*
+!go.mod
+!go.sum
+!slapr/*.go
+!docker/Dockerfile
