@@ -58,7 +58,7 @@ The container runs as user `slapr` (uid/gid 10001, `HOME=/home/slapr`) in
 To bake scripts in, build a derived image:
 
     FROM ghcr.io/ohler55/slapr:v1.5.2
-    COPY --chmod=0644 scripts/ /app/scripts/
+    COPY --chmod=0755 scripts/ /app/scripts/
 
 Executable scripts with `#!/usr/bin/env slapr` can be run by path directly.
 `*load-pathname*` is the script's absolute path, so `(load ...)` relative to
