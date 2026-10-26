@@ -3,14 +3,14 @@ module github.com/ohler55/slap
 go 1.27
 
 require (
-	github.com/jduhamel/slip-vault v1.5.1
-	github.com/ohler55/slip v1.6.0
-	github.com/ohler55/slip-fhir v1.6.0
-	github.com/ohler55/slip-ggql v1.6.0
-	github.com/ohler55/slip-jet v1.6.0
-	github.com/ohler55/slip-message v1.6.0
-	github.com/ohler55/slip-mongo v1.6.0
-	github.com/ohler55/slip-parquet v1.6.0
+	github.com/jduhamel/slip-vault v1.6.1
+	github.com/ohler55/slip v1.6.1
+	github.com/ohler55/slip-fhir v1.6.1
+	github.com/ohler55/slip-ggql v1.6.1
+	github.com/ohler55/slip-jet v1.6.1
+	github.com/ohler55/slip-message v1.6.1
+	github.com/ohler55/slip-mongo v1.6.1
+	github.com/ohler55/slip-parquet v1.6.1
 	golang.org/x/term v0.47.0
 )
 
