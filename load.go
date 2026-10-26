@@ -10,14 +10,15 @@ import (
 	"strings"
 
 	// Pull in all functions.
+	_ "github.com/jduhamel/slip-vault/vault"
 	"github.com/ohler55/slip"
 	_ "github.com/ohler55/slip-fhir/fhir"
 	_ "github.com/ohler55/slip-ggql/slipggql"
 	_ "github.com/ohler55/slip-jet/jet"
 	_ "github.com/ohler55/slip-message/message"
 	_ "github.com/ohler55/slip-mongo/slipmongo"
+	_ "github.com/ohler55/slip-parquet/slipparquet"
 	_ "github.com/ohler55/slip/pkg"
-	// _ "github.com/ohler55/slip-parquet/slipparquet"
 )
 
 //go:embed all:lisp
